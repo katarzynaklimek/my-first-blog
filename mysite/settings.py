@@ -28,6 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['198.211.99.20', 'localhost', '127.0.0.1', 'katarzynaklimek.pythonanywhere.com']
 
 
+
+
 # Application definition
 
 INSTALLED_APPS = (
@@ -102,3 +104,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static')
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
