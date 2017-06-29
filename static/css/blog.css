@@ -54,3 +54,11 @@ h1, h2, h3, h4 {
 .post h1 a, .post h1 a:visited {
     color: #000000;
 }
+
+#ang {
+  color: #ffffff;
+  float: right;
+  margin-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
