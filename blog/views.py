@@ -6,7 +6,7 @@ from .forms import PostForm
 
 def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts})
+    return render(request, 'blog/post_list.html', {'posts': posts, 'lang': detect_language(request)})
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -38,3 +38,12 @@ def post_edit(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
+
+def detect_language(request):
+    supported_langs = ['pl', 'en']
+    lang = request.COOKIES.get('lang')
+    if lang not in supported_langs:
+      request.META.get('HTTP_ACCEPT_LANGUAGE')
+    if lang not in supported_langs:
+      return 'pl'
+    return lang
