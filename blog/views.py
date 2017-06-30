@@ -2,15 +2,22 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from .models import Post
 from .forms import PostForm
+from django.http import HttpResponse
 
+supported_langs = ['pl', 'en']
 
 def post_list(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts, 'lang': detect_language(request)})
+    lang = detect_language(request)
+    posts = Post.objects.filter(published_date__lte=timezone.now(), language=lang).order_by('published_date')
+    response = render(request, 'blog/post_list.html', {'posts': posts, 'lang': lang})
+    response.set_cookie('lang', lang)
+
+    return response
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'blog/post_detail.html', {'post': post})
+    lang = detect_language(request)
+    return render(request, 'blog/post_detail.html', {'post': post, 'lang': lang})
 
 def post_new(request):
     if request.method == "POST":
@@ -40,10 +47,17 @@ def post_edit(request, pk):
     return render(request, 'blog/post_edit.html', {'form': form})
 
 def detect_language(request):
-    supported_langs = ['pl', 'en']
+    lang = request.GET.get('setlang')
+
+    if lang in supported_langs:
+        return lang
+
     lang = request.COOKIES.get('lang')
-    if lang not in supported_langs:
-      request.META.get('HTTP_ACCEPT_LANGUAGE')
-    if lang not in supported_langs:
-      return 'pl'
-    return lang
+
+    if lang in supported_langs:
+      return lang
+
+    return 'pl'
+
+def mylang(request):
+    return HttpResponse("request.LANGUAGE_CODE = %s\n" % request.LANGUAGE_CODE)
